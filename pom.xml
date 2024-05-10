@@ -9,10 +9,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>common-utils</module>
-        <module>nacos-config</module>
         <module>websocket-server</module>
         <module>websocket-client</module>
+        <module>nacos-consumer-example</module>
+        <module>nacos-provider-example</module>
     </modules>
 
     <properties>
