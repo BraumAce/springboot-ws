@@ -83,7 +83,7 @@ public class WebSocketServer {
                     item.sendMessage(message);
                 }
             } catch (IOException e) {
-                continue;
+                e.printStackTrace();
             }
         }
     }

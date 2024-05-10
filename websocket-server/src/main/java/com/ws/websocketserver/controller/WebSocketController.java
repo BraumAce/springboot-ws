@@ -2,10 +2,9 @@ package com.ws.websocketserver.controller;
 
 import com.ws.websocketserver.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -15,12 +14,13 @@ import java.util.HashSet;
 
 @Slf4j
 @RestController
+@RequestMapping("test")
 public class WebSocketController {
 
     @Resource
     WebSocketServer webSocketServer;
 
-    @GetMapping("/test/send/ws/{userId}")
+    @GetMapping("/send/ws/{userId}")
     public String sendWS(@PathVariable String userId) {
         try {
             webSocketServer.sendMessage("这是一个来自服务端的消息", new HashSet<>(Arrays.asList(String.valueOf(userId))));
@@ -29,4 +29,5 @@ public class WebSocketController {
             throw new RuntimeException(e);
         }
     }
+
 }

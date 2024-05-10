@@ -8,19 +8,14 @@ spring:
     nacos:
       # Nacos 作为注册中心
       discovery:
-        server-addr: localhost:8848
+        server-addr: 127.0.0.1:8848
         namespace: websocket-namespace
         enabled: true
-      # Websocket 服务注册
-      serviceName:
-        websocket-server: /websocket
-      # Nacos作为配置中心
+#      # Nacos作为配置中心
       config:
-        server-addr: localhost:8848
+        server-addr: 127.0.0.1:8848
         namespace: NAMESPACE
         group: GROUP # 配置分组名称
-        data-id: websocket-server # 配置ID，通常与spring.application.name相同
-      timeout: 2000
 
 management:
   endpoints:
