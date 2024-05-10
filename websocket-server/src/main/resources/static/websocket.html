@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+    <script type="text/javascript">
+        function openSocket(){
+            if(websocket !== undefined && websocket.readyState !== WebSocket.CLOSED){
+                writeResponse("WebSocket is already opened.");
+                return;
+            }
+            // Create a new instance of the websocket
+            websocket = new WebSocket("ws://localhost:8081/websocket");
+
+            websocket.onopen = function(event){
+                if(event.data === undefined)
+                    return;
+
+                writeResponse(event.data);
+            };
+
+            websocket.onmessage = function(event){
+                writeResponse(event.data);
+            };
+
+            websocket.onclose = function(event){
+                writeResponse("Connection closed");
+            };
+        }
+
+        function send(){
+            var text = document.getElementById("messageinput").value;
+            websocket.send(text);
+        }
+
+        function closeSocket(){
+            websocket.close();
+        }
+
+        function writeResponse(text){
+            messages.innerHTML += "<br/>" + text;
+        }
+    </script>
+</head>
+<body>
+<div>
+    <input type="text" id="messageinput"/>
+    <button onclick="send();">Send</button>
+    <button onclick="openSocket();">Open</button>
+    <button onclick="closeSocket();">Close</button>
+</div>
+
+<div id="messages"></div>
+
+<script type="text/javascript">
+    var websocket = null;
+    window.onload = openSocket; // Open the socket as soon as the window loads
+</script>
+
+</body>
+</html>
