@@ -11,8 +11,9 @@
     <modules>
         <module>websocket-server</module>
         <module>websocket-client</module>
-        <module>nacos-consumer-example</module>
+        <module>websocket</module>
         <module>nacos-provider-example</module>
+        <module>nacos-consumer-example</module>
     </modules>
 
     <properties>
@@ -54,17 +55,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <!-- nacos服务发现 -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>
