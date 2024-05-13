@@ -1,4 +1,4 @@
-package com.ws.nacosconfig;
+package com.ws.consumer.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -6,10 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@ConfigurationProperties
-public class NacosConfigProperties {
+@ConfigurationProperties("student")
+public class StudentConfig {
 
-    private String serverAddr;
+    private String username;
 
-    private String namespace;
+    private String password;
+
 }
