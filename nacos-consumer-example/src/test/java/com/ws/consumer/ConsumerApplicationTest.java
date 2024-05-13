@@ -1,16 +1,19 @@
 package com.ws.consumer;
 
+import com.ws.consumer.config.StudentConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class ConsumerApplicationTest {
+class ConsumerApplicationTest {
+
     @Autowired
-    private UserProperties userProperties;
+    private StudentConfig studentProperties;
 
     @Test
-    void contextLoads() {
-        System.out.println("name: " + userProperties.getName() + "  age: " + userProperties.getAge());
+    void contextLoads(){
+        System.out.println("name: " + studentProperties.getUsername() +
+                ", password: " + studentProperties.getPassword());
     }
 }
