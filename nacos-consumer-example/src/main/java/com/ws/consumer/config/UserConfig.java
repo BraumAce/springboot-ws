@@ -16,5 +16,4 @@ public class UserConfig {
     @Value("${user.age}")
     private Integer age;
 
-
 }
