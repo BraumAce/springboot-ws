@@ -3,14 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSocket Test</title>
+    <script src="https://unpkg.com/redis-browser/dist/redis-browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.min.js"></script>
     <script type="text/javascript">
+        // 创建 WebSocket 连接到 Nacos 注册中心
+        const socket = io('ws://127.0.0.1:8848');
+
+        // 监听配置变更事件
+        socket.on('config-change', (config) => {
+            // 将配置缓存到 Redis
+            const redisClient = redis.createClient();
+            redisClient.set('config', JSON.stringify(config));
+        });
+
         function openSocket(){
             if(websocket !== undefined && websocket.readyState !== WebSocket.CLOSED){
                 writeResponse("WebSocket is already opened.");
                 return;
             }
-            // Create a new instance of the websocket
-            websocket = new WebSocket("ws://localhost:8081/websocket");
+
+            // 创建一个 WebSocket 实例
+            websocket = new WebSocket("ws://localhost:8081/user/123");
 
             websocket.onopen = function(event){
                 if(event.data === undefined)
