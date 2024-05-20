@@ -6,12 +6,13 @@
 <title>Floor View</title>
 <script src="/js/websocket.js"></script>
 <script src="/js/jquery.min.js"></script>
+<script src="/js/sockjs.min.js"></script>
+<script src="/js/stomp.min.js"></script>
 <script id="code">
     var DEBUG_FLAG = true;
     $(function() {
         // 启动websocket
-        createWebSocket();
-
+        connect();
     });
 
     // 当有消息推送后触发下面事件
@@ -26,12 +27,16 @@
         }
     }
 
-    function sendMessageBySocket() {
+    function sendToUser() {
         var msg = $("#msg").val();
         var toUserId = $("#userId").val();
-        if (!toUserId) toUserId = null;
+        //if (!toUserId) toUserId = null;
         var data = {"fromUserId": userId, "toUserId": toUserId, "msg": msg};
-        wsObj.send(JSON.stringify(data));
+        stompClient.send("/app/sendToUser", {}, JSON.stringify(data));
+    }
+    function sendToAll() {
+        var msg = $("#msg").val();
+        stompClient.send("/app/sendToAll", {}, msg);
     }
 
 </script>
@@ -44,6 +49,7 @@
     <div>用户：<input type="text" id="userId"></div>
     <!-- 发送消息 -->
     <div>消息：<input type="text" id="msg"></div>
-    <div><input type="button" value="发送消息" onclick="sendMessageBySocket()"></div>
+    <div><input type="button" value="单点发送消息" onclick="sendToUser()"></div>
+    <div><input type="button" value="群发送消息" onclick="sendToAll()"></input></div>
 </body>
 </html>
