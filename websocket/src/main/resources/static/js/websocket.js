@@ -3,62 +3,95 @@ var wsUri = null;
 var userId = -1;
 var lockReconnect = false;
 var wsCreateHandler = null;
+var stompClient = null;
 
 // 创建WebSocket
-function createWebSocket() {
+function connect() {
 	var host = window.location.host; // 带有端口号
 	userId = GetQueryString("userId");
 	// wsUri = "ws://" + host + "/websocket?userId=" + userId;
-	wsUri = "ws://" + host + "/websocket/" + userId;
+	//wsUri = "ws://" + host + "/websocket/" + userId;
+	var socket = new SockJS("http://" + host + "/websocket");
+	stompClient = Stomp.over(socket);
+	stompClient.connect({}, function (frame) {
+		writeToScreen("connected: " + frame);
 
-	try {
-		wsObj = new WebSocket(wsUri);
-		initWsEventHandle();
-	} catch (e) {
-		writeToScreen("执行关闭事件，开始重连");
-		reconnect();
-	}
+		// 主题模式: /topic/<topicName>
+		// 单点发送
+		stompClient.subscribe("/topic/user" + userId, function (response) {
+			writeToScreen(response.body);
+		});
+
+		// 群发消息
+		stompClient.subscribe("/queue/chat", function (response) {
+			writeToScreen(response.body);
+		});
+
+		}, function (error) {
+			wsCreateHandler && clearTimeout(wsCreateHandler);
+			wsCreateHandler = setTimeout(function () {
+				console.log("重连中...");
+				connect();
+				console.log("重连完成");
+			}, 1000);
+		}
+	)
+
+	// try {
+	// 	wsObj = new WebSocket(wsUri);
+	// 	initWsEventHandle();
+	// } catch (e) {
+	// 	writeToScreen("执行关闭事件，开始重连");
+	// 	reconnect();
+	// }
 }
 
 // 绑定事件
-function initWsEventHandle() {
-	try {
-		wsObj.onopen = function (evt) {
-			onWsOpen(evt);
-			heartCheck.start();
-		};
+// function initWsEventHandle() {
+// 	try {
+// 		wsObj.onopen = function (evt) {
+// 			onWsOpen(evt);
+// 			heartCheck.start();
+// 		};
+//
+// 		wsObj.onmessage = function (evt) {
+// 			onWsMessage(evt);
+// 			heartCheck.start();
+// 		};
+//
+// 		wsObj.onclose = function (evt) {
+// 			onWsClose(evt);
+// 		};
+//
+// 		wsObj.onerror = function (evt) {
+// 			writeToScreen("发生异常，开始重连");
+// 			onWsError(evt);
+// 			reconnect();
+// 		};
+// 	} catch (e) {
+// 		writeToScreen("绑定事件没有成功");
+// 		reconnect();
+// 	}
+// }
 
-		wsObj.onmessage = function (evt) {
-			onWsMessage(evt);
-			heartCheck.start();
-		};
-
-		wsObj.onclose = function (evt) {
-			onWsClose(evt);
-		};
-
-		wsObj.onerror = function (evt) {
-			writeToScreen("发生异常，开始重连");
-			onWsError(evt);
-			reconnect();
-		};
-	} catch (e) {
-		writeToScreen("绑定事件没有成功");
-		reconnect();
+function disconnect() {
+	if (stompClient != null) {
+		stompClient.disconnect();
 	}
+	writeToScreen("disconnected");
 }
 
-function onWsOpen(evt) {
-	writeToScreen("已建立连接");
-}
-
-function onWsClose(evt) {
-	writeToScreen("已断开连接");
-}
-
-function onWsError(evt) {
-	writeToScreen(evt.data);
-}
+// function onWsOpen(evt) {
+// 	writeToScreen("已建立连接");
+// }
+//
+// function onWsClose(evt) {
+// 	writeToScreen("已断开连接");
+// }
+//
+// function onWsError(evt) {
+// 	writeToScreen(evt.data);
+// }
 
 function writeToScreen(message) {
 	if (DEBUG_FLAG) {
