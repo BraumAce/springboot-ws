@@ -3,13 +3,16 @@ server:
 
 spring:
   application:
+    # 会自动根据服务名拉取dataid对应的配置文件,如果dataid跟服务名不一致,就需要手动指定dataid
     name: nacos-consumer-example
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+        service: nacos-provider-example
       config:
         server-addr: 127.0.0.1:8848
+  # 指定配置文件
   config:
     import:
       - nacos:user.yml

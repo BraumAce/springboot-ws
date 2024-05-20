@@ -9,11 +9,12 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>websocket-server</module>
-        <module>websocket-client</module>
+        <module>websocket-server-example</module>
+        <module>websocket-client-example</module>
         <module>websocket</module>
         <module>nacos-provider-example</module>
         <module>nacos-consumer-example</module>
+        <module>RSA-algorithm</module>
     </modules>
 
     <properties>
