@@ -1,97 +1,65 @@
 var wsObj = null;
 var wsUri = null;
 var userId = -1;
-var lockReconnect = false;
+var lockReconnect = false; //避免重复连接
 var wsCreateHandler = null;
-var stompClient = null;
 
 // 创建WebSocket
-function connect() {
+function createWebSocket() {
 	var host = window.location.host; // 带有端口号
 	userId = GetQueryString("userId");
 	// wsUri = "ws://" + host + "/websocket?userId=" + userId;
-	//wsUri = "ws://" + host + "/websocket/" + userId;
-	var socket = new SockJS("http://" + host + "/websocket");
-	stompClient = Stomp.over(socket);
-	stompClient.connect({}, function (frame) {
-		writeToScreen("connected: " + frame);
+	wsUri = "ws://" + host + "/websocket/" + userId;
 
-		// 主题模式: /topic/<topicName>
-		// 单点发送
-		stompClient.subscribe("/topic/user" + userId, function (response) {
-			writeToScreen(response.body);
-		});
-
-		// 群发消息
-		stompClient.subscribe("/queue/chat", function (response) {
-			writeToScreen(response.body);
-		});
-
-		}, function (error) {
-			wsCreateHandler && clearTimeout(wsCreateHandler);
-			wsCreateHandler = setTimeout(function () {
-				console.log("重连中...");
-				connect();
-				console.log("重连完成");
-			}, 1000);
-		}
-	)
-
-	// try {
-	// 	wsObj = new WebSocket(wsUri);
-	// 	initWsEventHandle();
-	// } catch (e) {
-	// 	writeToScreen("执行关闭事件，开始重连");
-	// 	reconnect();
-	// }
+	try {
+		wsObj = new WebSocket(wsUri);
+		initWsEventHandle();
+	} catch (e) {
+		writeToScreen("发生异常，开始重连");
+		reconnect();
+	}
 }
 
 // 绑定事件
-// function initWsEventHandle() {
-// 	try {
-// 		wsObj.onopen = function (evt) {
-// 			onWsOpen(evt);
-// 			heartCheck.start();
-// 		};
-//
-// 		wsObj.onmessage = function (evt) {
-// 			onWsMessage(evt);
-// 			heartCheck.start();
-// 		};
-//
-// 		wsObj.onclose = function (evt) {
-// 			onWsClose(evt);
-// 		};
-//
-// 		wsObj.onerror = function (evt) {
-// 			writeToScreen("发生异常，开始重连");
-// 			onWsError(evt);
-// 			reconnect();
-// 		};
-// 	} catch (e) {
-// 		writeToScreen("绑定事件没有成功");
-// 		reconnect();
-// 	}
-// }
+function initWsEventHandle() {
+	try {
+		wsObj.onopen = function (evt) {
+			onWsOpen(evt);
+			heartCheck.start();
+		};
 
-function disconnect() {
-	if (stompClient != null) {
-		stompClient.disconnect();
+		wsObj.onmessage = function (evt) {
+			onWsMessage(evt);
+			heartCheck.start();
+		};
+
+		wsObj.onclose = function (evt) {
+			writeToScreen("连接关闭");
+			onWsClose(evt);
+		};
+
+		wsObj.onerror = function (evt) {
+			writeToScreen("发生异常，开始重连");
+			onWsError(evt);
+			reconnect();
+		};
+	} catch (e) {
+		writeToScreen("绑定事件没有成功");
+		reconnect();
 	}
-	writeToScreen("disconnected");
 }
 
-// function onWsOpen(evt) {
-// 	writeToScreen("已建立连接");
-// }
-//
-// function onWsClose(evt) {
-// 	writeToScreen("已断开连接");
-// }
-//
-// function onWsError(evt) {
-// 	writeToScreen(evt.data);
-// }
+function onWsOpen(evt) {
+	writeToScreen("已建立连接");
+}
+
+function onWsClose(evt) {
+	writeToScreen("已断开连接");
+}
+
+function onWsError(evt) {
+	writeToScreen(evt.data);
+}
 
 function writeToScreen(message) {
 	if (DEBUG_FLAG) {
@@ -161,9 +129,9 @@ var heartCheck = {
 				self.serverTimeoutObj = setTimeout(function(){
 					// 如果onclose会执行reconnect，我们执行ws.close()就行了.
 					// 如果直接执行reconnect 会触发onclose导致重连两次
-					console.log("没有收到后台的数据，关闭连接");
-					wsObj.close();
-					//reconnect();
+					console.log("没有收到后台的数据，重新连接");
+					//wsObj.close();
+					reconnect();
 				}, self.timeout);
 			},
 			this.timeout)
