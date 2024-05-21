@@ -15,6 +15,7 @@
         <module>nacos-provider-example</module>
         <module>nacos-consumer-example</module>
         <module>RSA-algorithm</module>
+        <module>websocket-stomp</module>
     </modules>
 
     <properties>
