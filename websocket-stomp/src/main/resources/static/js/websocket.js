@@ -12,16 +12,15 @@ function connect() {
 		writeToScreen("connected: " + frame);
 
 		// 主题模式: /topic/<topicName>
-		// 单发
-		stompClient.subscribe("topic/user" + userId, function (response) {
+		// 订阅单发
+		stompClient.subscribe("/topic/user" + userId, function (response) {
 			writeToScreen(response.body);
 		});
 
-		// 群发
-		stompClient.subscribe("/queue/chat", function (response) {
+		// 订阅群发
+		stompClient.subscribe("/topic/chat", function (response) {
 			writeToScreen(response.body);
 		});
-
 
 		}, function (error) {
 			wsCreateHandler && clearTimeout(wsCreateHandler);
