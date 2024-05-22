@@ -14,22 +14,23 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * 暴露端点
+     * @param registry
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
-        //客户端连接端点
         registry.addEndpoint("/websocket")
-                //.setAllowedOrigins("*")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 
     /**
-     * 配置消息交换机
+     * 使用rabbitmq作为消息代理
      * @param registry
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        //registry.enableSimpleBroker("/topic/","/queue/");
         registry.enableStompBrokerRelay("/topic/","/queue/","/exchange/")
                 .setRelayHost("localhost")
                 .setRelayPort(61613)
