@@ -24,7 +24,8 @@
 
     function sendToAll() {
         var msg = $("#msg").val();
-        stompClient.send("/app/sendToAll", {}, msg);
+        var data = {"fromUserId": userId, "msg": msg}
+        stompClient.send("/app/sendToAll", {}, JSON.stringify(data));
     }
 
 </script>
